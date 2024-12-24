@@ -8,6 +8,7 @@ return {
 
 			"nvim-telescope/telescope-smart-history.nvim",
 			"nvim-telescope/telescope-ui-select.nvim",
+		--	"kkharji/sqlite.lua",
 		},
 		config = function()
 			require("tuta.telescope")
