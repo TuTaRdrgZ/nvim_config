@@ -85,6 +85,21 @@ return {
 						documentFormattingProvider = false,
 					},
 				},
+				gopls = {
+					settings = {
+						gopls = {
+							hints = {
+								assignVariableTypes = true,
+								compositeLiteralFields = true,
+								compositeLiteralTypes = true,
+								constantValues = true,
+								functionTypeParameters = true,
+								parameterNames = true,
+								rangeVariableTypes = true,
+							},
+						},
+					},
+				},
 
 				clangd = {
 					capabilities = capabilities,
@@ -94,7 +109,7 @@ return {
 						documentFormattingProvider = false,
 						documentRangeFormattingProvider = false,
 					},
-					cmd = { "clangd", "--background-index", "--clang-tidy" },
+					cmd = { "clangd", "--background-index", "--clang-tidy", "--offset-encoding=utf-16" },
 					root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git"),
 
 					filetypes = { "c", "cpp", "h", "hpp" },
