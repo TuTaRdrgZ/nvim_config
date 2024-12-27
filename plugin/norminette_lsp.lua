@@ -1,6 +1,6 @@
 local client = vim.lsp.start_client({
 	name = "norminette_lsp",
-	cmd = { "/home/tuta/tuta/coding/randomProjects/norminette-lsp/norminette-lsp" },
+	cmd = { "/home/tuta/tuta/coding/randomProjects/lsp/norminette-lsp-cpp/NLSP" },
 	on_attach = function()
 		local builtin = require("telescope.builtin")
 		vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -22,7 +22,8 @@ if not client then
 end
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "c", "h" },
+	pattern = { "h", "c" },
+
 	callback = function()
 		vim.lsp.buf_attach_client(0, client)
 	end,

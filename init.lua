@@ -29,3 +29,4 @@ require("lazy").setup({ import = "tuta/plugins" }, {
 })
 
 vim.cmd("colorscheme gruvbuddy")
+vim.g.c_syntax_for_h = 1

@@ -20,7 +20,7 @@ local setup = function()
 		callback = function(args)
 			local ft = vim.bo[args.buf].filetype
 
-			if ft == "c" then
+			if ft == "c" or ft == "h" then
 				-- Para archivos .c, usa sólo el formateador personalizado
 				require("conform").format({
 					bufnr = args.buf,
