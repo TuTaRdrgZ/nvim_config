@@ -1,6 +1,6 @@
 local client = vim.lsp.start_client({
 	name = "norminette_lsp",
-	cmd = { "/home/tuta/tuta/coding/randomProjects/lsp/norminette-lsp-cpp/NLSP" },
+	cmd = { "/home/tuta/.local/bin/NLSP" },
 	on_attach = function()
 		local builtin = require("telescope.builtin")
 		vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
