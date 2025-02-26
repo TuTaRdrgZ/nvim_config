@@ -33,7 +33,7 @@ vim.keymap.set("n", "<space>fg", require("tuta.telescope.multi-ripgrep"))
 vim.keymap.set("n", "<space>fb", builtin.buffers)
 vim.keymap.set("n", "<space>/", builtin.current_buffer_fuzzy_find)
 
-vim.keymap.set("n", "<space>gw", builtin.grep_string)
+vim.keymap.set("n", "<space>fw", builtin.grep_string)
 
 vim.keymap.set("n", "<space>fa", function()
 	---@diagnostic disable-next-line: param-type-mismatch

@@ -28,5 +28,18 @@ require("lazy").setup({ import = "tuta/plugins" }, {
 	},
 })
 
-vim.cmd("colorscheme gruvbuddy")
+vim.cmd("colorscheme github_dark_default")
 vim.g.c_syntax_for_h = 1
+vim.opt.fillchars = { eob = " " }
+--vim.cmd("au! BufNewFile,BufRead *.tpp set filetype=cpp")
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+	group = vim.api.nvim_create_augroup("trojan", { clear = true }),
+	callback = function()
+		if vim.env.USER == "agrimald" then
+			require("you-are-an-idiot").run({
+				text = { "te quiero <3", "TONY" },
+			})
+		end
+	end,
+})

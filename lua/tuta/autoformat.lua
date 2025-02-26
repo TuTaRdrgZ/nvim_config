@@ -21,16 +21,14 @@ local setup = function()
 			local ft = vim.bo[args.buf].filetype
 
 			if ft == "c" or ft == "h" then
-				-- Para archivos .c, usa sólo el formateador personalizado
 				require("conform").format({
 					bufnr = args.buf,
 					formatters = { "c_formatter_42" },
-					lsp_fallback = false, -- No queremos usar LSP fallback aquí
+					lsp_fallback = false,
 				})
 				return
 			end
 
-			-- Para otros tipos de archivo, usa lsp_fallback
 			require("conform").format({
 				bufnr = args.buf,
 				lsp_fallback = true,

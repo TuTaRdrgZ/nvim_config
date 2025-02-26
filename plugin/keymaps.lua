@@ -82,18 +82,26 @@ map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 
 -- learn to move
-map("n", "<down>", function()
-	vim.notify("Use j to move down!!", "Warn", { title = "Learn to move" })
-end, { desc = "Move Down" })
-map("n", "<up>", function()
-	vim.notify("Use k to move up!!", "Warn", { title = "Learn to move" })
-end, { desc = "Move Up" })
-map("n", "<left>", function()
-	vim.notify("Use h to move left!!", "Warn", { title = "Learn to move" })
-end, { desc = "Move Left" })
-map("n", "<right>", function()
-	vim.notify("Use l to move right!!", "Warn", { title = "Learn to move" })
-end, { desc = "Move Right" })
+-- map("n", "<down>", function()
+-- 	vim.notify("Use j to move down!!", "Warn", { title = "Learn to move" })
+-- end, { desc = "Move Down" })
+-- map("n", "<up>", function()
+-- 	vim.notify("Use k to move up!!", "Warn", { title = "Learn to move" })
+-- end, { desc = "Move Up" })
+-- map("n", "<left>", function()
+-- 	vim.notify("Use h to move left!!", "Warn", { title = "Learn to move" })
+-- end, { desc = "Move Left" })
+-- map("n", "<right>", function()
+-- 	vim.notify("Use l to move right!!", "Warn", { title = "Learn to move" })
+-- end, { desc = "Move Right" })
 
 -- better escape
 map("i", "jk", "<esc>", { desc = "Better Escape" })
+
+vim.keymap.set("n", "<leader>dt", function()
+	if vim.diagnostic.is_enabled() then
+		vim.diagnostic.enable(false)
+	else
+		vim.diagnostic.enable()
+	end
+end)
