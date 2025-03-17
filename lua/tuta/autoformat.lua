@@ -1,4 +1,3 @@
--- Variable global para controlar el autoformatter
 local autoformat_enabled = true
 
 local setup = function()
@@ -29,22 +28,16 @@ local setup = function()
 			local ft = vim.bo[args.buf].filetype
 
 			if ft == "c" or ft == "h" then
-<<<<<<< HEAD
-=======
 				-- Para archivos .c y .h, usa sólo el formateador personalizado
->>>>>>> 640410c (autoformat)
 				require("conform").format({
 					bufnr = args.buf,
 					formatters = { "c_formatter_42" },
-					lsp_fallback = false,
+					lsp_fallback = false, -- No queremos usar LSP fallback aquí
 				})
 				return
 			end
 
-<<<<<<< HEAD
-=======
 			-- Para otros tipos de archivo (por ejemplo, cpp se formatea con clangd vía LSP)
->>>>>>> 640410c (autoformat)
 			require("conform").format({
 				bufnr = args.buf,
 				lsp_fallback = true,
