@@ -1,3 +1,6 @@
+-- Variable global para controlar el autoformatter
+local autoformat_enabled = true
+
 local setup = function()
 	-- Autoformatting Setup
 	local conform = require("conform")
@@ -18,9 +21,18 @@ local setup = function()
 	vim.api.nvim_create_autocmd("BufWritePre", {
 		group = vim.api.nvim_create_augroup("custom-conform", { clear = true }),
 		callback = function(args)
+			-- Solo se formatea si autoformat_enabled es true
+			if not autoformat_enabled then
+				return
+			end
+
 			local ft = vim.bo[args.buf].filetype
 
 			if ft == "c" or ft == "h" then
+<<<<<<< HEAD
+=======
+				-- Para archivos .c y .h, usa sólo el formateador personalizado
+>>>>>>> 640410c (autoformat)
 				require("conform").format({
 					bufnr = args.buf,
 					formatters = { "c_formatter_42" },
@@ -29,6 +41,10 @@ local setup = function()
 				return
 			end
 
+<<<<<<< HEAD
+=======
+			-- Para otros tipos de archivo (por ejemplo, cpp se formatea con clangd vía LSP)
+>>>>>>> 640410c (autoformat)
 			require("conform").format({
 				bufnr = args.buf,
 				lsp_fallback = true,
@@ -36,6 +52,16 @@ local setup = function()
 			})
 		end,
 	})
+
+	-- Keybinding para alternar (toggle) el autoformatter (modo normal: "space" + "tf")
+	vim.keymap.set("n", "<space>tf", function()
+		autoformat_enabled = not autoformat_enabled
+		if autoformat_enabled then
+			print("Autoformatter activado")
+		else
+			print("Autoformatter desactivado")
+		end
+	end, { desc = "Toggle autoformatter" })
 end
 
 setup()

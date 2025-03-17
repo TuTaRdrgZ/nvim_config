@@ -111,7 +111,11 @@ return {
 					cmd = { "clangd", "--background-index", "--clang-tidy", "--offset-encoding=utf-16" },
 					root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git"),
 
+<<<<<<< HEAD
 					filetypes = { "c", "h", "cpp", "hpp" },
+=======
+					filetypes = { "c", "cpp", "h", "hpp" },
+>>>>>>> 640410c (autoformat)
 				},
 
 				tailwindcss = {
