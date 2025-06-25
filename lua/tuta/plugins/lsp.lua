@@ -136,6 +136,18 @@ return {
 						},
 					},
 				},
+				cssls = {
+					capabilities = capabilities,
+					settings = {
+						css = {
+							validate = true,
+						},
+					},
+				},
+				html = {
+					capabilities = capabilities,
+					filetypes = { "html", "htm" },
+				},
 			}
 
 			local servers_to_install = vim.tbl_filter(function(key)
