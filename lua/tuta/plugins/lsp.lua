@@ -9,34 +9,17 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			{
-				-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-				-- used for completion, annotations and signatures of Neovim apis
-				"folke/lazydev.nvim",
-				ft = "lua",
-				opts = {
-					library = {
-						-- Load luvit types when the `vim.uv` word is found
-						{ path = "luvit-meta/library", words = { "vim%.uv" } },
-					},
-				},
-			},
+			"folke/lazydev.nvim",
 			{ "Bilal2453/luvit-meta", lazy = true },
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-
 			{ "j-hui/fidget.nvim", opts = {} },
 			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim" },
-
-			-- Autoformatting
 			"stevearc/conform.nvim",
-
-			-- Schema information
 			"b0o/SchemaStore.nvim",
 		},
 		config = function()
-			-- Don't do LSP stuff if we're in Obsidian Edit mode
 			if vim.g.obsidian then
 				return
 			end
@@ -49,7 +32,6 @@ return {
 					local item = table.remove(keys, 1)
 					default = default[item]
 				end
-
 				if vim.islist(default) then
 					for _, value in ipairs(default) do
 						table.insert(values, value)
@@ -64,62 +46,29 @@ return {
 				return values
 			end
 
-			local capabilities = nil
-			if pcall(require, "blink.cmp") then
-				capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
-			end
-
-			local lspconfig = require("lspconfig")
-
 			local servers = {
 				lua_ls = {
-					server_capabilities = {
-						semanticTokensProvider = vim.NIL,
-					},
+					server_capabilities = { semanticTokensProvider = vim.NIL },
 				},
 				ts_ls = {
-					root_dir = require("lspconfig").util.root_pattern("package.json"),
+					root_dir = require("lspconfig.util").root_pattern("package.json"), -- Nota: require directo a util
 					single_file = false,
-					server_capabilities = {
-						documentFormattingProvider = false,
-					},
+					server_capabilities = { documentFormattingProvider = false },
 				},
-				-- gopls = {
-				-- 	settings = {
-				-- 		gopls = {
-				-- 			hints = {
-				-- 				assignVariableTypes = true,
-				-- 				compositeLiteralFields = true,
-				-- 				compositeLiteralTypes = true,
-				-- 				constantValues = true,
-				-- 				functionTypeParameters = true,
-				-- 				parameterNames = true,
-				-- 				rangeVariableTypes = true,
-				-- 			},
-				-- 		},
-				-- 	},
-				-- },
-
 				clangd = {
-					capabilities = capabilities,
 					init_options = {
-						clangdFileStatus = true, -- Muestra el estado del archivo en el workspace
-						completeUnimported = true, -- Autocompletado de cabeceras no incluidas
+						clangdFileStatus = true,
+						completeUnimported = true,
 						documentFormattingProvider = false,
 						documentRangeFormattingProvider = false,
 					},
 					cmd = { "clangd", "--background-index", "--clang-tidy", "--offset-encoding=utf-16" },
-					root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git"),
-
+					root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
 					filetypes = { "c", "h", "cpp", "hpp" },
 				},
-
 				tailwindcss = {
 					init_options = {
-						userLanguages = {
-							eruby = "erb",
-							heex = "phoenix-heex",
-						},
+						userLanguages = { eruby = "erb", heex = "phoenix-heex" },
 					},
 					filetypes = extend("tailwindcss", "filetypes", { "ocaml.mlx" }),
 					settings = {
@@ -137,49 +86,37 @@ return {
 					},
 				},
 				cssls = {
-					capabilities = capabilities,
-					settings = {
-						css = {
-							validate = true,
-						},
-					},
+					settings = { css = { validate = true } },
 				},
-				html = {
-					capabilities = capabilities,
-					filetypes = { "html", "htm" },
-				},
+				html = { filetypes = { "html", "htm" } },
 			}
-
-			local servers_to_install = vim.tbl_filter(function(key)
-				local t = servers[key]
-				if type(t) == "table" then
-					return not t.manual_install
-				else
-					return t
-				end
-			end, vim.tbl_keys(servers))
 
 			require("mason").setup()
-			local ensure_installed = {
-				"stylua",
-				"lua_ls",
-				"clangd",
-				-- "tailwind-language-server",
-			}
-
-			vim.list_extend(ensure_installed, servers_to_install)
+			local ensure_installed = vim.tbl_keys(servers or {})
+			vim.list_extend(ensure_installed, { "stylua" })
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-			for name, config in pairs(servers) do
-				if config == true then
-					config = {}
-				end
-				config = vim.tbl_deep_extend("force", {}, {
-					capabilities = capabilities,
-				}, config)
+			require("mason-lspconfig").setup({
+				handlers = {
+					function(server_name)
+						local opts = servers[server_name] or {}
 
-				lspconfig[name].setup(config)
-			end
+						opts.capabilities = vim.tbl_deep_extend("force", {}, capabilities, opts.capabilities or {})
+
+						local ok, config_module = pcall(require, "lspconfig.configs." .. server_name)
+						local default_config = {}
+						if ok and config_module then
+							default_config = config_module.default_config
+						end
+
+						local final_config = vim.tbl_deep_extend("force", default_config, opts)
+
+						vim.lsp.config[server_name] = final_config
+
+						vim.lsp.enable(server_name)
+					end,
+				},
+			})
 
 			local disable_semantic_tokens = {
 				lua = true,
@@ -214,14 +151,12 @@ return {
 						client.server_capabilities.semanticTokensProvider = nil
 					end
 
-					-- Override server capabilities
 					if settings.server_capabilities then
 						for k, v in pairs(settings.server_capabilities) do
 							if v == vim.NIL then
 								---@diagnostic disable-next-line: cast-local-type
 								v = nil
 							end
-
 							client.server_capabilities[k] = v
 						end
 					end
@@ -229,7 +164,6 @@ return {
 			})
 
 			require("tuta.autoformat").setup()
-
 			require("lsp_lines").setup()
 			vim.diagnostic.config({ virtual_text = true, virtual_lines = false })
 
